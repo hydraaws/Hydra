@@ -6063,14 +6063,14 @@ local Get_Is_Id = Get_Is_Id:gsub('#Description',Description)
 local Get_Is_Id = Get_Is_Id:gsub('#game',Num_Games) 
 local Get_Is_Id = Get_Is_Id:gsub('#photos',Total_Photp) 
 send(msg.chat_id_, msg.id_,'['..Get_Is_Id..']') 
-else
+else            
 send(msg.chat_id_, msg.id_,'\n*⌔︙ايديك ← '..Id..'\n⌔︙معرفك ← *['..UserName_User..']*\n⌔︙رتبتك ← '..Status_Gps..'\n⌔︙رسائلك ← '..NumMsg..'\n⌔︙السحكات ← '..NumMessageEdit..' \n⌔︙تتفاعلك ← '..TotalMsg..'\n⌔︙ مجوهراتك ← '..Num_Games..'*') 
 end
-end
+end         
 end,nil)   
 end,nil)   
 end
-if text and text:match('^تنظيف (%d+)$') and Constructor(msg) or text and text:match('^حذف (%d+)$') and Constructor(msg) or text and text:match('^مسح (%d+)$') and Constructor(msg) then    
+if text and text:match('^تنظيف (%d+)$') and Admin(msg) or text and text:match('^حذف (%d+)$') and Admin(msg) or text and text:match('^مسح (%d+)$') and Admin(msg) then    
 local Msg_Num = tonumber(text:match('^تنظيف (%d+)$')) or tonumber(text:match('^حذف (%d+)$'))  or tonumber(text:match('^مسح (%d+)$')) 
 if Msg_Num > 1000 then 
 send(msg.chat_id_, msg.id_,'⌔︙تستطيع حذف *(1000)* رساله فقط') 
@@ -6081,6 +6081,56 @@ for i=1,tonumber(Msg_Num) do
 Delete_Message(msg.chat_id_,{[0]=Message})
 Message = Message - 1048576
 end
+Q_QQQ1 = {[0]=msg.id_}
+local Message = msg.id_
+new = 0
+for i=1,tonumber(Msg_Num) do
+Message = Message - 1048576
+Q_QQQ1[i] = Message
+end
+Delete_Message(msg.chat_id_,Q_QQQ1)
+send(msg.chat_id_, msg.id_,'⌔︙تم ازالة *- '..Msg_Num..'* رساله من الرايخ')  
+elseif text and (text == "تنظيف جميع الميديا" or text == "تنظيف الميديا") and Admin(msg) then   
+    Q_QQQ1 = {[0]=msg.id_}
+    local Message = msg.id_
+    for i=1,100 do
+    Message = Message - 1048576
+    Q_QQQ1[i] = Message
+    end
+    tdcli_function({ID = "GetMessages",chat_id_ = msg.chat_id_,message_ids_ = Q_QQQ1},function(arg,data)
+        new = 0
+        Q_QQQ1 = {}
+        for i=0 ,data.total_count_ do
+            if data.messages_[i] and data.messages_[i].content_ and data.messages_[i].content_.ID ~= "MessageText" then
+                Q_QQQ1[new] = data.messages_[i].id_
+                new = new + 1
+            end
+        end
+        Delete_Message(msg.chat_id_,Q_QQQ1)
+    end,nil)  
+    send(msg.chat_id_, msg.id_,"⌔︙تم ازالة 100 من وسائط 🛡") 
+elseif text and (text == "تنظيف جميع الرسائل المعدله" or text == "تنظيف الرسائل المعدلة" or text == "تنظيف الرسائل المعدله") and Admin(msg) then   
+    Q_QQQ1 = {[0]=msg.id_}
+    local Message = msg.id_
+    for i=1,100 do
+    Message = Message - 1048576
+    Q_QQQ1[i] = Message
+    end
+    tdcli_function({ID = "GetMessages",chat_id_ = msg.chat_id_,message_ids_ = Q_QQQ1},function(arg,data)
+        new = 0
+        Q_QQQ1 = {}
+        for i=0 ,data.total_count_ do
+            if data.messages_[i] and (not data.messages_[i].edit_date_ or data.messages_[i].edit_date_ ~= 0) then
+                Q_QQQ1[new] = data.messages_[i].id_
+                new = new + 1
+            end
+        end
+        Delete_Message(msg.chat_id_,Q_QQQ1)
+    end,nil)  
+    send(msg.chat_id_, msg.id_,'⌔︙تم ازالة 100 رساله معدلة 🛡') 
+elseif text == 'ايدي' and tonumber(msg.reply_to_message_id_) > 0 and not redis:get(bot_id..'Status:Lock:Id:Photo'..msg.chat_id_) then
+function Function_Status(extra, result, success)
+tdcli_function ({ID = "GetUser",user_id_ = result.sender_user_id_},function(arg,data)       
 send(msg.chat_id_, msg.id_,'⌔︙تم ازالة *- '..Msg_Num..'* رساله من الرايخ')  
 elseif text == 'ايدي' and tonumber(msg.reply_to_message_id_) > 0 and not redis:get(bot_id..'Status:Lock:Id:Photo'..msg.chat_id_) then
 function Function_Status(extra, result, success)
@@ -6516,7 +6566,9 @@ send(msg.chat_id_, msg.id_,[[*
 ⌔︙ردود المدير ، 
 ⌔︙اضف ، حذف ← { رد }
 ⌔︙تنظيف ← { عدد }
-┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉
+⌔︙تنظيف ← { الميديا}
+⌔︙تنظيف ← { الرسائل المعدله }
+ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉ ┉
 ⌔︙قناة البوت ←* @Y666A
 ]]) 
 elseif text == 'م4' and Constructor(msg) then
@@ -7098,6 +7150,30 @@ end
 end
 end
 ------------------------------------------------------------------------------------------------------------
+local ban_Keko = {}
+function tdcli_update_callback(data)
+if data.ID == ("UpdateChannel") then 
+if data.channel_.status_.ID == ("ChatMemberStatusKicked") then 
+redis:srem(bot_id..'ChekBotAdd','-100'..data.channel_.id_)  
+end
+elseif data.ID == ("UpdateNewMessage") then
+msg = data.message_
+text = msg.content_.text_
+if (data.message_.content_.text_) then 
+    if (ban_Keko["ban"..msg.chat_id_..msg.sender_user_id_] and ban_Keko["ban"..msg.chat_id_..msg.sender_user_id_] == data.message_.content_.text_ and ban_Keko["ban:count:"..msg.chat_id_..msg.sender_user_id_] and ban_Keko["ban:count:"..msg.chat_id_..msg.sender_user_id_] >= 3) then 
+        if (ban_Keko["ban2:"..msg.chat_id_..msg.sender_user_id_]) then 
+            ban_Keko["ban2:"..msg.chat_id_..msg.sender_user_id_] = nil
+            send(msg.chat_id_, msg.id_,"⌔︙انت الان في منطقه مفتوحه 😉")  
+        end 
+        return false
+    elseif(ban_Keko["ban"..msg.chat_id_..msg.sender_user_id_] and ban_Keko["ban"..msg.chat_id_..msg.sender_user_id_] == data.message_.content_.text_ and ban_Keko["ban:count:"..msg.chat_id_..msg.sender_user_id_]) then 
+        ban_Keko["ban:count:"..msg.chat_id_..msg.sender_user_id_] = ban_Keko["ban:count:"..msg.chat_id_..msg.sender_user_id_] + 1;
+    elseif(ban_Keko["ban"..msg.chat_id_..msg.sender_user_id_] and ban_Keko["ban"..msg.chat_id_..msg.sender_user_id_] == data.message_.content_.text_) then 
+        ban_Keko["ban:count:"..msg.chat_id_..msg.sender_user_id_] = 1;
+    else 
+        ban_Keko["ban"..msg.chat_id_..msg.sender_user_id_] = data.message_.content_.text_
+        ban_Keko["ban2:"..msg.chat_id_..msg.sender_user_id_] = true
+        ban_Keko["ban:count:"..msg.chat_id_..msg.sender_user_id_] = 1;
 function tdcli_update_callback(data)
 if data.ID == ("UpdateChannel") then 
 if data.channel_.status_.ID == ("ChatMemberStatusKicked") then 
@@ -7145,6 +7221,14 @@ redis:del(bot_id.."Command:Reids:Group"..msg.chat_id_..":"..msg.sender_user_id_)
 redis:set(bot_id.."Command:Reids:Group:End"..msg.chat_id_..":"..msg.sender_user_id_,"true1") 
 return false
 end
+    
+    else 
+        Q_QQQ1["ban"..msg.chat_id_..msg.sender_user_id_] = data.message_.content_.text_
+        Q_QQQ1["ban2:"..msg.chat_id_..msg.sender_user_id_] = true
+        Q_QQQ1["ban:count:"..msg.chat_id_..msg.sender_user_id_] = 1;
+    end 
+
+end 
 ------------------------------------------------------------------------------------------------------------
 if text and redis:get(bot_id.."Command:Reids:Group:End"..msg.chat_id_..":"..msg.sender_user_id_) == "true1" then
 local NewCmd = redis:get(bot_id.."Command:Reids:Group:New"..msg.chat_id_)
